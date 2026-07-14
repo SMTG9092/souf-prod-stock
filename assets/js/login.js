@@ -25,7 +25,7 @@ const LoginController = {
 
     isLoading:false,
 
-    init(){
+    async init(){
 
         this.cacheElements();
 
@@ -35,12 +35,12 @@ const LoginController = {
 
         LanguageManager.init();
 
-        SessionManager.init();
+        await SessionManager.init();
 
-        this.checkSession();
+        await this.checkSession();
 
     },
-
+    
     cacheElements(){
 
         this.elements={
