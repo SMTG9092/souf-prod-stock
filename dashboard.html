@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoufStock ERP/WMS - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        /* =============================================================================
+           SoufStock ERP/WMS - Dashboard Styles
+           Glassmorphism dark theme - production ready
+           ============================================================================= */
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #0B7A3B; --primary-dark: #096830; --primary-light: #0D8F46; --primary-glow: rgba(11,122,59,0.3);
+            --accent: #1DB954; --danger: #DC3545; --warning: #F59E0B; --success: #10B981; --info: #3B82F6;
+            --dark: #0F172A; --dark-card: rgba(15,23,42,0.75);
+            --glass-bg: rgba(255,255,255,0.06); --glass-bg-hover: rgba(255,255,255,0.1);
+            --glass-border: rgba(255,255,255,0.1); --glass-border-hover: rgba(255,255,255,0.2);
+            --text-primary: #FFFFFF; --text-secondary: rgba(255,255,255,0.7); --text-muted: rgba(255,255,255,0.5); --text-dark: rgba(255,255,255,0.3);
+            --input-bg: rgba(255,255,255,0.06); --input-border: rgba(255,255,255,0.12);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.15); --shadow-md: 0 8px 32px rgba(0,0,0,0.25); --shadow-lg: 0 20px 60px rgba(0,0,0,0.35); --shadow-glow: 0 0 40px rgba(11,122,59,0.15);
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+            --transition-fast: 0.15s cubic-bezier(0.4,0,0.2,1); --transition-normal: 0.25s cubic-bezier(0.4,0,0.2,1); --transition-slow: 0.4s cubic-bezier(0.4,0,0.2,1);
+            --sidebar-width: 260px; --sidebar-collapsed: 72px; --topbar-height: 64px;
+        }
+
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+        /* ===== BACKGROUND ===== */
+        .bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+        .bg-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80'); background-size: cover; background-position: center; animation: bgZoom 40s ease-in-out infinite alternate; }
+        @keyframes bgZoom { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+        .bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,20,10,0.94) 0%, rgba(0,30,15,0.9) 40%, rgba(0,40,20,0.86) 70%, rgba(0,50,25,0.82) 100%); }
+        .bg-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(11,122,59,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(11,122,59,0.025) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; }
+        .orb-1 { width: 500px; height: 500px; background: var(--primary); top: -150px; right: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -100px; }
+
+        /* ===== LAYOUT ===== */
+        .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: var(--sidebar-width); background: rgba(0,15,8,0.85); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border-right: 1px solid var(--glass-border); z-index: 100; display: flex; flex-direction: column; transition: width var(--transition-slow); overflow: hidden; }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+        .sidebar-header { padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
+        .sidebar-logo { width: 40px; height: 40px; flex-shrink: 0; }
+        .sidebar-logo svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 8px rgba(11,122,59,0.4)); }
+        .sidebar-brand { transition: opacity var(--transition-normal), width var(--transition-normal); white-space: nowrap; }
+        .sidebar.collapsed .sidebar-brand { opacity: 0; width: 0; overflow: hidden; }
+        .sidebar-brand h1 { font-size: 1.125rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, #FFFFFF 0%, #A7F3D0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .sidebar-brand span { font-size: 0.625rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+        .sidebar-toggle { position: absolute; top: 24px; right: -12px; width: 24px; height: 24px; background: var(--primary); border: 2px solid rgba(0,20,10,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: transform var(--transition-normal); }
+        .sidebar-toggle:hover { background: var(--primary-light); }
+        .sidebar-toggle svg { width: 12px; height: 12px; color: white; transition: transform var(--transition-normal); }
+        .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 12px; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(11,122,59,0.3); border-radius: 2px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section.collapsed .nav-item { display: none; }
+        .nav-section-title { font-size: 0.625rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px 4px; transition: opacity var(--transition-normal); white-space: nowrap; cursor: pointer; user-select: none; }
+        .nav-section-title:hover { color: var(--text-muted); }
+        .sidebar.collapsed .nav-section-title { opacity: 0; padding: 4px; pointer-events: none; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: all var(--transition-fast); margin-bottom: 2px; position: relative; overflow: hidden; white-space: nowrap; }
+        .nav-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); border-radius: 0 3px 3px 0; opacity: 0; transition: opacity var(--transition-fast); }
+        .nav-item:hover { background: var(--glass-bg-hover); color: var(--text-primary); }
+        .nav-item.active { background: rgba(11,122,59,0.15); color: var(--primary); }
+        .nav-item.active::before { opacity: 1; }
+        .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .nav-item .nav-text { transition: opacity var(--transition-normal); }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px; }
+        .sidebar.collapsed .nav-item .nav-text { display: none; }
+        .sidebar.collapsed .nav-item svg { width: 22px; height: 22px; }
+        .nav-badge { margin-left: auto; background: var(--danger); color: white; font-size: 0.625rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; flex-shrink: 0; }
+        .sidebar.collapsed .nav-badge { display: none; }
+        .sidebar-footer { padding: 12px; border-top: 1px solid var(--glass-border); flex-shrink: 0; }
+        .user-mini { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius-sm); transition: all var(--transition-fast); cursor: pointer; }
+        .user-mini:hover { background: var(--glass-bg-hover); }
+        .user-mini-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; color: white; flex-shrink: 0; overflow: hidden; }
+        .user-mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-mini-info { transition: opacity var(--transition-normal); }
+        .sidebar.collapsed .user-mini-info { display: none; }
+        .user-mini-name { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); }
+        .user-mini-role { font-size: 0.6875rem; color: var(--primary); }
+
+        /* ===== MAIN AREA ===== */
+        .main { flex: 1; margin-left: var(--sidebar-width); transition: margin-left var(--transition-slow); display: flex; flex-direction: column; min-height: 100vh; }
+        .sidebar.collapsed ~ .main { margin-left: var(--sidebar-collapsed); }
+
+        /* ===== TOPBAR ===== */
+        .topbar { height: var(--topbar-height); background: rgba(0,15,8,0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 50; }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .breadcrumb { font-size: 0.8125rem; color: var(--text-muted); }
+        .breadcrumb .current { color: var(--text-primary); font-weight: 600; }
+        .topbar-right { display: flex; align-items: center; gap: 8px; }
+        .topbar-btn { width: 38px; height: 38px; border-radius: var(--radius-sm); background: transparent; border: 1px solid transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition-fast); position: relative; }
+        .topbar-btn:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-hover); color: var(--text-primary); }
+        .topbar-btn svg { width: 18px; height: 18px; }
+        .topbar-btn .indicator { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid rgba(0,15,8,0.9); }
+        .topbar-search { position: relative; }
+        .topbar-search input { width: 280px; padding: 8px 12px 8px 36px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.8125rem; font-family: inherit; outline: none; transition: all var(--transition-fast); }
+        .topbar-search input::placeholder { color: var(--text-muted); }
+        .topbar-search input:focus { border-color: var(--primary); background: rgba(11,122,59,0.06); box-shadow: 0 0 0 3px rgba(11,122,59,0.1); }
+        .topbar-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; }
+        .topbar-divider { width: 1px; height: 24px; background: var(--glass-border); margin: 0 4px; }
+        .datetime { display: flex; align-items: center; gap: 12px; font-size: 0.8125rem; color: var(--text-secondary); }
+        .datetime-item { display: flex; align-items: center; gap: 6px; }
+        .datetime-item svg { width: 16px; height: 16px; color: var(--primary); }
+        .user-menu { display: flex; align-items: center; gap: 10px; padding: 4px 8px 4px 4px; border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); border: 1px solid transparent; }
+        .user-menu:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-hover); }
+        .user-menu-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: white; overflow: hidden; }
+        .user-menu-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-menu-info { line-height: 1.3; }
+        .user-menu-name { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); }
+        .user-menu-role { font-size: 0.6875rem; color: var(--text-muted); }
+        .user-menu svg { width: 14px; height: 14px; color: var(--text-muted); }
+
+        /* ===== CONTENT AREA ===== */
+        .content { flex: 1; padding: 24px; overflow-y: auto; }
+        .content::-webkit-scrollbar { width: 6px; }
+        .content::-webkit-scrollbar-thumb { background: rgba(11,122,59,0.3); border-radius: 3px; }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header { margin-bottom: 24px; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .page-header p { font-size: 0.875rem; color: var(--text-secondary); }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 20px; position: relative; overflow: hidden; transition: all var(--transition-normal); cursor: pointer; }
+        .stat-card:hover { border-color: var(--glass-border-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0.5; }
+        .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .stat-icon.green { background: rgba(11,122,59,0.15); color: var(--primary); }
+        .stat-icon.blue { background: rgba(59,130,246,0.15); color: var(--info); }
+        .stat-icon.orange { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .stat-icon.purple { background: rgba(139,92,246,0.15); color: #8B5CF6; }
+        .stat-icon.red { background: rgba(220,53,69,0.15); color: var(--danger); }
+        .stat-icon svg { width: 20px; height: 20px; }
+        .stat-trend { font-size: 0.6875rem; font-weight: 600; display: flex; align-items: center; gap: 2px; }
+        .stat-trend.up { color: var(--success); }
+        .stat-trend.down { color: var(--danger); }
+        .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.5px; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+        /* ===== GLASS CARDS ===== */
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); overflow: hidden; transition: all var(--transition-normal); }
+        .glass-card:hover { border-color: var(--glass-border-hover); }
+        .card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--glass-border); }
+        .card-title { font-size: 0.9375rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .card-title svg { width: 18px; height: 18px; color: var(--primary); }
+        .card-actions { display: flex; align-items: center; gap: 8px; }
+        .card-btn { padding: 6px 12px; font-size: 0.6875rem; font-weight: 600; color: var(--text-secondary); background: var(--glass-bg-hover); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); font-family: inherit; }
+        .card-btn:hover { color: var(--text-primary); border-color: var(--glass-border-hover); }
+        .card-body { padding: 16px 20px; }
+
+        /* ===== CHARTS ===== */
+        .chart-container { position: relative; height: 280px; }
+        .chart-container.sm { height: 200px; }
+
+        /* ===== TABLES ===== */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead th { text-align: left; padding: 10px 12px; font-size: 0.6875rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--glass-border); white-space: nowrap; }
+        .data-table tbody td { padding: 10px 12px; font-size: 0.8125rem; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .data-table tbody tr { transition: background var(--transition-fast); }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 0.6875rem; font-weight: 600; }
+        .badge-success { background: rgba(16,185,129,0.12); color: var(--success); }
+        .badge-warning { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .badge-danger { background: rgba(220,53,69,0.12); color: var(--danger); }
+        .badge-info { background: rgba(59,130,246,0.12); color: var(--info); }
+
+        /* ===== ALERTS ===== */
+        .alert-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 8px; transition: all var(--transition-fast); }
+        .alert-item:hover { background: rgba(255,255,255,0.03); }
+        .alert-item:last-child { margin-bottom: 0; }
+        .alert-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .alert-icon.critical { background: rgba(220,53,69,0.15); color: var(--danger); }
+        .alert-icon.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .alert-icon.success { background: rgba(16,185,129,0.15); color: var(--success); }
+        .alert-icon svg { width: 16px; height: 16px; }
+        .alert-content { flex: 1; }
+        .alert-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .alert-desc { font-size: 0.75rem; color: var(--text-muted); }
+        .alert-meta { font-size: 0.6875rem; color: var(--text-dark); margin-top: 4px; }
+
+        /* ===== DASHBOARD GRID ===== */
+        .dash-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+        .dash-col-3 { grid-column: span 3; }
+        .dash-col-4 { grid-column: span 4; }
+        .dash-col-6 { grid-column: span 6; }
+        .dash-col-8 { grid-column: span 8; }
+        .dash-col-12 { grid-column: span 12; }
+
+        @media (max-width: 1200px) {
+            .dash-col-3, .dash-col-4 { grid-column: span 6; }
+            .dash-col-8 { grid-column: span 12; }
+        }
+        @media (max-width: 768px) {
+            .dash-col-3, .dash-col-4, .dash-col-6, .dash-col-8 { grid-column: span 12; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .topbar-search { display: none; }
+            .datetime { display: none; }
+            .main { margin-left: var(--sidebar-collapsed); }
+            .sidebar { width: var(--sidebar-collapsed); }
+            .sidebar .sidebar-brand, .sidebar .nav-text, .sidebar .nav-section-title, .sidebar .user-mini-info { display: none; }
+            .sidebar .nav-item { justify-content: center; padding: 12px; }
+            .sidebar .nav-item svg { width: 22px; height: 22px; }
+            .sidebar-toggle { display: none; }
+            .content { padding: 16px; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .topbar { padding: 0 12px; }
+            .user-menu-info { display: none; }
+        }
+
+        /* ===== SKELETON LOADING ===== */
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: skeleton 1.5s ease-in-out infinite; border-radius: var(--radius-sm); }
+        @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .skeleton-text { height: 12px; margin-bottom: 8px; }
+        .skeleton-title { height: 16px; width: 60%; margin-bottom: 16px; }
+        .skeleton-circle { width: 40px; height: 40px; border-radius: 50%; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== DROPDOWN ===== */
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 200px; background: rgba(15,23,42,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all var(--transition-fast); }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 0.8125rem; color: var(--text-secondary); cursor: pointer; transition: all var(--transition-fast); }
+        .dropdown-item:hover { background: var(--glass-bg-hover); color: var(--text-primary); }
+        .dropdown-item svg { width: 16px; height: 16px; }
+        .dropdown-divider { height: 1px; background: var(--glass-border); margin: 4px 0; }
+
+        /* ===== NOTIFICATION PANEL ===== */
+        .notif-panel { position: absolute; top: calc(100% + 8px); right: -80px; width: 360px; max-height: 480px; background: rgba(15,23,42,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all var(--transition-fast); overflow: hidden; display: flex; flex-direction: column; }
+        .notif-panel.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notif-header { padding: 14px 16px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; }
+        .notif-header h4 { font-size: 0.875rem; font-weight: 700; }
+        .notif-header span { font-size: 0.6875rem; color: var(--primary); cursor: pointer; }
+        .notif-list { flex: 1; overflow-y: auto; padding: 8px; }
+        .notif-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); }
+        .notif-item:hover { background: var(--glass-bg-hover); }
+        .notif-item.unread { background: rgba(11,122,59,0.05); }
+        .notif-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+        .notif-content { flex: 1; }
+        .notif-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .notif-desc { font-size: 0.75rem; color: var(--text-muted); }
+        .notif-time { font-size: 0.6875rem; color: var(--text-dark); margin-top: 4px; }
+
+        /* ===== LOADING OVERLAY ===== */
+        .page-loader { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all var(--transition-normal); }
+        .page-loader.active { opacity: 1; visibility: visible; }
+        .page-loader-spinner { width: 48px; height: 48px; border: 3px solid rgba(11,122,59,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        ::selection { background: rgba(11,122,59,0.4); color: #FFFFFF; }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-container">
+        <div class="bg-image"></div>
+        <div class="bg-overlay"></div>
+        <div class="bg-grid"></div>
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+    </div>
+
+    <!-- ===== PAGE LOADER ===== -->
+    <div class="page-loader" id="pageLoader">
+        <div class="page-loader-spinner"></div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div class="app">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="12" width="32" height="20" rx="4" fill="url(#slogo1)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                        <rect x="9" y="7" width="22" height="16" rx="3" fill="url(#slogo2)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+                        <rect x="14" y="2" width="12" height="12" rx="2.5" fill="url(#slogo3)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                        <path d="M20 6L21.5 10.5H26.5L22.5 13L24 17.5L20 15L16 17.5L17.5 13L13.5 10.5H18.5L20 6Z" fill="white" fill-opacity="0.9"/>
+                        <defs>
+                            <linearGradient id="slogo1" x1="4" y1="12" x2="36" y2="32"><stop stop-color="#0B7A3B"/><stop offset="1" stop-color="#064E2B"/></linearGradient>
+                            <linearGradient id="slogo2" x1="9" y1="7" x2="31" y2="23"><stop stop-color="#0D8F46"/><stop offset="1" stop-color="#0B7A3B"/></linearGradient>
+                            <linearGradient id="slogo3" x1="14" y1="2" x2="26" y2="14"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#0D8F46"/></linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="sidebar-brand">
+                    <h1>SoufStock</h1>
+                    <span>ERP / WMS</span>
+                </div>
+            </div>
+            <div class="sidebar-toggle" id="sidebarToggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </div>
+
+            <!-- Dynamic sidebar navigation - built by JS from SIDEBAR.GROUPS -->
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini" id="sidebarUser">
+                    <div class="user-mini-avatar" id="sidebarAvatar">SY</div>
+                    <div class="user-mini-info">
+                        <div class="user-mini-name" id="sidebarUserName">Chargement...</div>
+                        <div class="user-mini-role" id="sidebarUserRole">...</div>
+                    </div>
+                </div>
+                <a class="nav-item" id="logoutBtn" href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span class="nav-text">Deconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <main class="main">
+            <!-- ===== TOPBAR ===== -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="breadcrumb">
+                        <span>SoufStock</span> / <span class="current" id="pageTitle">Dashboard</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" placeholder="Rechercher un article, lot, commande... (Ctrl+K)" id="globalSearch" autocomplete="off"/>
+                    </div>
+                    <div class="datetime">
+                        <div class="datetime-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <span id="currentDate">--/--/----</span>
+                        </div>
+                        <div class="datetime-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span id="currentTime">--:--:--</span>
+                        </div>
+                    </div>
+                    <div class="topbar-divider"></div>
+                    <button class="topbar-btn" id="fullscreenBtn" title="Plein ecran">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                    <div class="dropdown" id="notifDropdown">
+                        <button class="topbar-btn" id="notifBtn" title="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            <span class="indicator"></span>
+                        </button>
+                        <div class="notif-panel" id="notifPanel">
+                            <div class="notif-header"><h4>Notifications</h4><span id="markAllRead">Tout marquer lu</span></div>
+                            <div class="notif-list" id="notifList"></div>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="userDropdown">
+                        <div class="user-menu" id="userMenuBtn">
+                            <div class="user-menu-avatar" id="topbarAvatar">SY</div>
+                            <div class="user-menu-info">
+                                <div class="user-menu-name" id="topbarUserName">Chargement...</div>
+                                <div class="user-menu-role" id="topbarUserRole">...</div>
+                            </div>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <div class="dropdown-menu" id="userMenu">
+                            <div class="dropdown-item" id="menuProfile">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil
+                            </div>
+                            <div class="dropdown-item" id="menuSettings">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Parametres
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="menuLogout" style="color:var(--danger);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Deconnexion
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ===== CONTENT ===== -->
+            <div class="content" id="mainContent">
+                <!-- DASHBOARD VIEW -->
+                <div id="dashboardView">
+                    <div class="page-header">
+                        <h2>Dashboard</h2>
+                        <p>Bienvenue, <span id="welcomeName">...</span> ! Voici un apercu de votre activite.</p>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid" id="statsGrid"></div>
+
+                    <!-- Dashboard Grid -->
+                    <div class="dash-grid">
+                        <!-- Stock by Location Chart -->
+                        <div class="dash-col-4">
+                            <div class="glass-card slide-up" style="animation-delay:0.1s">
+                                <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Stock par Emplacement</div></div>
+                                <div class="card-body"><div class="chart-container sm"><canvas id="stockLocationChart"></canvas></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Movements Chart -->
+                        <div class="dash-col-4">
+                            <div class="glass-card slide-up" style="animation-delay:0.15s">
+                                <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Mouvements du Jour</div></div>
+                                <div class="card-body"><div class="chart-container sm"><canvas id="movementsChart"></canvas></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Top Articles -->
+                        <div class="dash-col-4">
+                            <div class="glass-card slide-up" style="animation-delay:0.2s">
+                                <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>Top 5 Articles</div></div>
+                                <div class="card-body"><div class="chart-container sm"><canvas id="topArticlesChart"></canvas></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Stock Evolution -->
+                        <div class="dash-col-8">
+                            <div class="glass-card slide-up" style="animation-delay:0.25s">
+                                <div class="card-header">
+                                    <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Evolution du Stock</div>
+                                    <div class="card-actions">
+                                        <button class="card-btn" data-range="7">7 jours</button>
+                                        <button class="card-btn" data-range="30">30 jours</button>
+                                        <button class="card-btn" data-range="365">Annee</button>
+                                    </div>
+                                </div>
+                                <div class="card-body"><div class="chart-container"><canvas id="stockEvolutionChart"></canvas></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Alerts -->
+                        <div class="dash-col-4">
+                            <div class="glass-card slide-up" style="animation-delay:0.3s">
+                                <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alertes Stock</div></div>
+                                <div class="card-body" id="alertsContainer"></div>
+                            </div>
+                        </div>
+
+                        <!-- Latest Movements -->
+                        <div class="dash-col-6">
+                            <div class="glass-card slide-up" style="animation-delay:0.35s">
+                                <div class="card-header">
+                                    <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Derniers Mouvements</div>
+                                    <div class="card-actions"><button class="card-btn" data-nav="mouvements">Voir tout</button></div>
+                                </div>
+                                <div class="card-body" style="padding:0"><div style="overflow-x:auto"><table class="data-table" id="movementsTable"><thead><tr><th>Type</th><th>Article</th><th>Quantite</th><th>Date</th></tr></thead><tbody id="movementsTableBody"></tbody></table></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Orders -->
+                        <div class="dash-col-6">
+                            <div class="glass-card slide-up" style="animation-delay:0.4s">
+                                <div class="card-header">
+                                    <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Commandes en Attente</div>
+                                    <div class="card-actions"><button class="card-btn" data-nav="suivi">Voir tout</button></div>
+                                </div>
+                                <div class="card-body" style="padding:0"><div style="overflow-x:auto"><table class="data-table" id="ordersTable"><thead><tr><th>N Commande</th><th>Client</th><th>Date</th><th>Statut</th></tr></thead><tbody id="ordersTableBody"></tbody></table></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE CONTENT CONTAINER -->
+                <div id="pageContent" style="display:none;"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- =============================================================================
+         EXTERNAL SCRIPTS - Load order is critical
+
+         Layer 1: Configuration (no dependencies)
+           - config.js          (user's file: APP_CONFIG, TABLES, PERMISSIONS)
+           - config-supplement.js  (VIEWS, SIDEBAR, CHARTS, SEARCH, ICONS)
+
+         Layer 2: Utilities (depends on config)
+           - utils.js           (user's file: SoufStock utilities)
+           - utils-supplement.js   (additional helpers)
+
+         Layer 3: Authentication (depends on config + utils)
+           - auth.js            (user's file: auth logic, APP state)
+           - auth-supplement.js    (additional auth helpers)
+
+         Layer 4: Dashboard Application (depends on all above)
+           - dashboard.js       (main controller)
+         ============================================================================= -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/config-supplement.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/utils-supplement.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/auth-supplement.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
