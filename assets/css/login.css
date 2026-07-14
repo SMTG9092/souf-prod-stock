@@ -1,1 +1,1702 @@
-/* SoufStock ERP/WMS - Login Page Specific Styles */
+/* =======================================================
+   SoufStock Enterprise ERP
+   Login.css
+   Part 1
+======================================================= */
+
+/* Google Font */
+
+:root{
+
+    /* Colors */
+
+    --primary:#0F8F4B;
+    --primary-light:#1BCB72;
+    --primary-dark:#0A6C38;
+
+    --secondary:#1F2937;
+
+    --success:#16A34A;
+    --warning:#F59E0B;
+    --danger:#DC2626;
+
+    --white:#FFFFFF;
+
+    --gray-50:#F9FAFB;
+    --gray-100:#F3F4F6;
+    --gray-200:#E5E7EB;
+    --gray-300:#D1D5DB;
+    --gray-400:#9CA3AF;
+    --gray-500:#6B7280;
+    --gray-600:#4B5563;
+    --gray-700:#374151;
+    --gray-800:#1F2937;
+    --gray-900:#111827;
+
+    --dark:#0E1726;
+    --dark-card:#162032;
+
+    /* Radius */
+
+    --radius-xs:6px;
+    --radius-sm:10px;
+    --radius-md:14px;
+    --radius-lg:18px;
+    --radius-xl:24px;
+    --radius-round:999px;
+
+    /* Shadow */
+
+    --shadow-sm:0 2px 8px rgba(0,0,0,.08);
+
+    --shadow-md:0 10px 30px rgba(0,0,0,.15);
+
+    --shadow-lg:0 25px 60px rgba(0,0,0,.30);
+
+    /* Animation */
+
+    --transition:.35s ease;
+
+}
+
+
+/* ===========================
+   RESET
+=========================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    background:#07121D;
+
+    color:#FFF;
+
+    overflow:hidden;
+
+}
+
+
+/* ===========================
+   PAGE
+=========================== */
+
+.page{
+
+    width:100vw;
+
+    height:100vh;
+
+    display:grid;
+
+    grid-template-columns:58% 42%;
+
+    overflow:hidden;
+
+}
+
+
+/* ===========================
+   HERO PANEL
+=========================== */
+
+.hero-panel{
+
+    position:relative;
+
+    background:url("../images/login-bg.webp")
+    center
+    center/cover
+    no-repeat;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+}
+
+
+.hero-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(
+
+    135deg,
+
+    rgba(5,18,32,.88),
+
+    rgba(11,95,58,.70)
+
+    );
+
+    backdrop-filter:blur(2px);
+
+}
+
+
+.hero-content{
+
+    position:relative;
+
+    z-index:2;
+
+    width:82%;
+
+}
+
+
+/* ===========================
+   BRAND
+=========================== */
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:60px;
+
+}
+
+
+.brand-logo{
+
+    width:70px;
+
+    height:70px;
+
+}
+
+
+.brand h1{
+
+    font-size:38px;
+
+    font-weight:800;
+
+}
+
+
+.brand span{
+
+    color:#A7F3D0;
+
+    font-size:15px;
+
+}
+
+
+/* ===========================
+   HERO TITLE
+=========================== */
+
+.hero-text h2{
+
+    font-size:54px;
+
+    font-weight:800;
+
+    line-height:1.2;
+
+    margin-bottom:20px;
+
+}
+
+
+.hero-text h2 span{
+
+    color:var(--primary-light);
+
+}
+
+
+.hero-text p{
+
+    width:75%;
+
+    line-height:1.9;
+
+    color:#D1D5DB;
+
+    font-size:18px;
+
+}
+
+
+/* ===========================
+   MODULE GRID
+=========================== */
+
+.modules-grid{
+
+    margin-top:45px;
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
+
+}
+/* =======================================================
+   LOGIN.CSS
+   PART 2
+   Hero Cards + Statistics + Right Panel
+=======================================================*/
+
+/* ===========================
+   MODULE CARD
+=========================== */
+
+.module-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+}
+
+.module-card:hover{
+
+    transform:translateY(-6px);
+
+    background:rgba(15,143,75,.18);
+
+    border-color:var(--primary-light);
+
+    box-shadow:0 20px 35px rgba(15,143,75,.25);
+
+}
+
+.module-card i{
+
+    width:52px;
+
+    height:52px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(15,143,75,.18);
+
+    color:var(--primary-light);
+
+    font-size:22px;
+
+}
+
+.module-card span{
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+
+/* ===========================
+   HERO STATS
+=========================== */
+
+.hero-stats{
+
+    margin-top:55px;
+
+    display:flex;
+
+    gap:22px;
+
+}
+
+.stat-card{
+
+    flex:1;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    text-align:center;
+
+}
+
+.stat-card h3{
+
+    font-size:34px;
+
+    color:var(--primary-light);
+
+    margin-bottom:10px;
+
+}
+
+.stat-card span{
+
+    color:#D1D5DB;
+
+    font-size:15px;
+
+}
+
+
+/* ===========================
+   LOGIN PANEL
+=========================== */
+
+.login-panel{
+
+    position:relative;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:60px;
+
+    background:#09131F;
+
+}
+
+
+/* ===========================
+   TOP BAR
+=========================== */
+
+.login-topbar{
+
+    position:absolute;
+
+    top:30px;
+
+    right:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.topbar-btn{
+
+    height:48px;
+
+    padding:0 18px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#172435;
+
+    color:#FFF;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+}
+
+.topbar-btn:hover{
+
+    background:var(--primary);
+
+}
+
+.language-dropdown{
+
+    position:relative;
+
+}
+
+.dropdown-menu{
+
+    position:absolute;
+
+    top:58px;
+
+    right:0;
+
+    width:220px;
+
+    background:#1B2738;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    display:none;
+
+    box-shadow:var(--shadow-lg);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    z-index:999;
+
+}
+
+.dropdown-menu.show{
+
+    display:block;
+
+}
+
+.dropdown-menu button{
+
+    width:100%;
+
+    padding:16px 18px;
+
+    border:none;
+
+    background:none;
+
+    color:#FFF;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    transition:.25s;
+
+}
+
+.dropdown-menu button:hover{
+
+    background:rgba(15,143,75,.18);
+
+}
+
+
+/* ===========================
+   LOGIN CARD
+=========================== */
+
+.login-card{
+
+    width:100%;
+
+    max-width:520px;
+
+    padding:45px;
+
+    border-radius:28px;
+
+    background:#111C2C;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 30px 80px rgba(0,0,0,.35);
+
+}
+
+.login-header{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.login-logo{
+
+    width:72px;
+
+    margin-bottom:18px;
+
+}
+
+.login-header h2{
+
+    font-size:34px;
+
+    margin-bottom:12px;
+
+}
+
+.login-header p{
+
+    color:#AAB3BF;
+
+    line-height:1.7;
+
+}
+/* =======================================================
+   LOGIN.CSS
+   PART 3
+   Form + Inputs + Button + Security
+=======================================================*/
+
+/* ===========================
+   FORM
+=========================== */
+
+#loginForm{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.form-group label{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#D6DCE4;
+
+}
+
+
+/* ===========================
+   INPUT
+=========================== */
+
+.input-group{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    height:58px;
+
+    background:#1A2738;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:16px;
+
+    transition:var(--transition);
+
+}
+
+.input-group:hover{
+
+    border-color:rgba(15,143,75,.50);
+
+}
+
+.input-group:focus-within{
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(15,143,75,.18);
+
+}
+
+.input-group i:first-child{
+
+    width:58px;
+
+    text-align:center;
+
+    color:#7B8794;
+
+    font-size:18px;
+
+}
+
+.input-group input{
+
+    flex:1;
+
+    height:100%;
+
+    border:none;
+
+    outline:none;
+
+    background:transparent;
+
+    color:#FFF;
+
+    font-size:15px;
+
+    padding-right:15px;
+
+}
+
+.input-group input::placeholder{
+
+    color:#7E8794;
+
+}
+
+
+/* ===========================
+   PASSWORD BUTTON
+=========================== */
+
+.password-toggle{
+
+    width:58px;
+
+    height:58px;
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    color:#AAB3BF;
+
+    font-size:18px;
+
+    transition:var(--transition);
+
+}
+
+.password-toggle:hover{
+
+    color:var(--primary-light);
+
+}
+
+
+/* ===========================
+   ERROR MESSAGE
+=========================== */
+
+.error-message{
+
+    min-height:18px;
+
+    font-size:13px;
+
+    color:#EF4444;
+
+}
+
+
+/* ===========================
+   OPTIONS
+=========================== */
+
+.form-options{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+}
+
+.remember{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    color:#D1D5DB;
+
+    font-size:14px;
+
+}
+
+.remember input{
+
+    width:17px;
+
+    height:17px;
+
+    accent-color:var(--primary);
+
+}
+
+.form-options a{
+
+    color:var(--primary-light);
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    transition:var(--transition);
+
+}
+
+.form-options a:hover{
+
+    color:#FFFFFF;
+
+}
+
+
+/* ===========================
+   LOGIN BUTTON
+=========================== */
+
+.login-button{
+
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-light)
+    );
+
+    color:#FFF;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+    transition:var(--transition);
+
+    box-shadow:0 15px 30px rgba(15,143,75,.35);
+
+}
+
+.login-button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 22px 40px rgba(15,143,75,.45);
+
+}
+
+.login-button:active{
+
+    transform:scale(.98);
+
+}
+
+
+/* ===========================
+   SECURITY CARD
+=========================== */
+
+.security-card{
+
+    margin-top:28px;
+
+    display:flex;
+
+    gap:18px;
+
+    align-items:flex-start;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:rgba(15,143,75,.10);
+
+    border:1px solid rgba(15,143,75,.25);
+
+}
+
+.security-icon{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:rgba(15,143,75,.18);
+
+    color:var(--primary-light);
+
+    font-size:22px;
+
+}
+
+.security-content h4{
+
+    margin-bottom:6px;
+
+    font-size:16px;
+
+}
+
+.security-content p{
+
+    color:#AAB3BF;
+
+    line-height:1.6;
+
+    font-size:14px;
+
+}
+/* =======================================================
+   LOGIN.CSS
+   PART 4
+   Features + Footer + Toast + Loader
+=======================================================*/
+
+/* ===========================
+   QUICK FEATURES
+=========================== */
+
+.quick-features{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+    margin-top:28px;
+
+}
+
+.feature{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#1A2738;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    transition:var(--transition);
+
+}
+
+.feature:hover{
+
+    transform:translateY(-4px);
+
+    border-color:var(--primary);
+
+    background:rgba(15,143,75,.12);
+
+}
+
+.feature i{
+
+    font-size:22px;
+
+    color:var(--primary-light);
+
+}
+
+.feature span{
+
+    font-size:13px;
+
+    color:#D7DEE6;
+
+    font-weight:600;
+
+}
+
+
+/* ===========================
+   ERP INFO
+=========================== */
+
+.erp-info{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-top:30px;
+
+}
+
+.erp-item{
+
+    flex:1;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#162233;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.erp-label{
+
+    display:block;
+
+    color:#8E99A8;
+
+    font-size:13px;
+
+    margin-bottom:6px;
+
+}
+
+.erp-item strong{
+
+    color:#FFF;
+
+    font-size:15px;
+
+}
+
+
+/* ===========================
+   FOOTER
+=========================== */
+
+.login-footer{
+
+    margin-top:35px;
+
+    text-align:center;
+
+    color:#8D98A8;
+
+    font-size:13px;
+
+    line-height:1.8;
+
+}
+
+
+/* ===========================
+   TOAST
+=========================== */
+
+.toast-container{
+
+    position:fixed;
+
+    top:25px;
+
+    right:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+    z-index:9999;
+
+}
+
+.toast{
+
+    width:360px;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#182637;
+
+    border-left:5px solid var(--primary);
+
+    box-shadow:var(--shadow-lg);
+
+    animation:toastIn .35s ease;
+
+}
+
+.toast.success{
+
+    border-left-color:#16A34A;
+
+}
+
+.toast.error{
+
+    border-left-color:#DC2626;
+
+}
+
+.toast.warning{
+
+    border-left-color:#F59E0B;
+
+}
+
+.toast-icon{
+
+    width:46px;
+
+    height:46px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:rgba(15,143,75,.12);
+
+    color:var(--primary-light);
+
+    font-size:18px;
+
+}
+
+.toast-content{
+
+    flex:1;
+
+}
+
+.toast-content h4{
+
+    margin-bottom:6px;
+
+    font-size:15px;
+
+}
+
+.toast-content p{
+
+    color:#B7C0CB;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+.toast-close{
+
+    border:none;
+
+    background:none;
+
+    color:#9CA3AF;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}
+
+
+/* ===========================
+   LOADER
+=========================== */
+
+.fullscreen-loader{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(6,15,25,.92);
+
+    backdrop-filter:blur(8px);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:99999;
+
+}
+
+.fullscreen-loader.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+.loader-card{
+
+    width:360px;
+
+    padding:45px;
+
+    border-radius:26px;
+
+    text-align:center;
+
+    background:#152232;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 30px 80px rgba(0,0,0,.40);
+
+}
+
+.loader-spinner{
+
+    width:70px;
+
+    height:70px;
+
+    margin:auto auto 25px;
+
+    border-radius:50%;
+
+    border:5px solid rgba(255,255,255,.08);
+
+    border-top:5px solid var(--primary);
+
+    animation:spin 1s linear infinite;
+
+}
+
+.loader-card h3{
+
+    font-size:22px;
+
+    margin-bottom:10px;
+
+}
+
+.loader-card p{
+
+    color:#B4BFCA;
+
+    font-size:14px;
+
+}
+/* =======================================================
+   LOGIN.CSS
+   PART 5
+   Animations + Background + Responsive
+=======================================================*/
+
+/* ===========================
+   BACKGROUND EFFECTS
+=========================== */
+
+.bg-shape{
+
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(120px);
+
+    opacity:.18;
+
+    z-index:-2;
+
+}
+
+.bg-shape-1{
+
+    width:420px;
+
+    height:420px;
+
+    top:-120px;
+
+    left:-120px;
+
+    background:#0F8F4B;
+
+}
+
+.bg-shape-2{
+
+    width:340px;
+
+    height:340px;
+
+    right:-100px;
+
+    top:20%;
+
+    background:#16A34A;
+
+}
+
+.bg-shape-3{
+
+    width:280px;
+
+    height:280px;
+
+    bottom:-80px;
+
+    left:45%;
+
+    background:#22C55E;
+
+}
+
+.bg-grid{
+
+    position:fixed;
+
+    inset:0;
+
+    background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+    background-size:40px 40px;
+
+    z-index:-3;
+
+}
+
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#111827;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:50px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary-light);
+
+}
+
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+
+@keyframes spin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+@keyframes toastIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.04);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+.hero-content{
+
+    animation:fadeUp .8s ease;
+
+}
+
+.login-card{
+
+    animation:fadeUp 1s ease;
+
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:1200px){
+
+    .page{
+
+        grid-template-columns:50% 50%;
+
+    }
+
+    .hero-text h2{
+
+        font-size:42px;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .page{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .hero-panel{
+
+        display:none;
+
+    }
+
+    .login-panel{
+
+        padding:40px 25px;
+
+    }
+
+    .login-card{
+
+        max-width:560px;
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .login-topbar{
+
+        top:18px;
+
+        right:18px;
+
+    }
+
+    .login-card{
+
+        padding:28px;
+
+        border-radius:22px;
+
+    }
+
+    .quick-features{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .erp-info{
+
+        flex-direction:column;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    body{
+
+        overflow:auto;
+
+    }
+
+    .login-panel{
+
+        padding:18px;
+
+    }
+
+    .login-card{
+
+        padding:22px;
+
+    }
+
+    .login-header h2{
+
+        font-size:26px;
+
+    }
+
+    .topbar-btn{
+
+        height:42px;
+
+        padding:0 12px;
+
+        font-size:13px;
+
+    }
+
+    .input-group{
+
+        height:52px;
+
+    }
+
+    .login-button{
+
+        height:52px;
+
+    }
+
+}
+
+
+/* ===========================
+   LIGHT MODE
+=========================== */
+
+body.light-mode{
+
+    background:#F3F6FB;
+
+    color:#111827;
+
+}
+
+body.light-mode .login-panel{
+
+    background:#F7F9FC;
+
+}
+
+body.light-mode .login-card{
+
+    background:#FFFFFF;
+
+    color:#111827;
+
+}
+
+body.light-mode .input-group{
+
+    background:#F4F6F9;
+
+    border-color:#D6DCE5;
+
+}
+
+body.light-mode .input-group input{
+
+    color:#111827;
+
+}
+
+body.light-mode .module-card{
+
+    background:rgba(255,255,255,.55);
+
+}
+
+body.light-mode .feature{
+
+    background:#F8FAFC;
+
+}
+
+body.light-mode .erp-item{
+
+    background:#F5F7FA;
+
+}
+
+body.light-mode .loader-card{
+
+    background:#FFFFFF;
+
+    color:#111827;
+
+}
