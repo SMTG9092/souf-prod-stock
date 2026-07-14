@@ -48,43 +48,34 @@ class Dashboard {
         try {
 
             Loader.show(
-
                 "Chargement...",
-
                 "Initialisation du Dashboard"
-
             );
 
             ThemeManager.init();
 
             LanguageManager.init();
 
-            SessionManager.init();
+            await SessionManager.init();
 
-            if (
+            const authenticated = await SessionManager.isAuthenticated();
 
-                !SessionManager.isAuthenticated()
+            if (!authenticated) {
 
-            ) {
-
-                window.location.href =
-
-                    APP_CONFIG.ROUTES.LOGIN;
+                window.location.replace(
+                    APP_CONFIG.ROUTES.LOGIN
+                );
 
                 return;
 
             }
 
-            this.profile =
-
-                await Profile.load();
+            this.profile = await Profile.load();
 
             if (!this.profile) {
 
                 throw new Error(
-
                     "Impossible de charger le profil."
-
                 );
 
             }
@@ -114,25 +105,19 @@ class Dashboard {
             this.initialized = true;
 
             Toast.success(
-
                 "Bienvenue",
-
                 Profile.getName()
-
             );
 
         }
 
         catch (error) {
 
-            console.error(error);
+            console.error("Dashboard Init Error:", error);
 
             Toast.error(
-
                 "Dashboard",
-
                 error.message
-
             );
 
         }
