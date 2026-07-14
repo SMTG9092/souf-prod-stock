@@ -160,7 +160,7 @@ const LoginController = {
         }
 
     },
-   
+     **/
      * ============================================================
      * Validation
      * ============================================================
@@ -301,104 +301,80 @@ const LoginController = {
 
     },
 
- * ============================================================
- * Handle Login
- * ============================================================
+    /**
+     * ============================================================
+     * Handle Login
+     * ============================================================
+     */
 
+    async handleLogin(e){
 
-async handleLogin(e){
+        e.preventDefault();
 
-    e.preventDefault();
+        if(this.isLoading) return;
 
-    if(this.isLoading) return;
+        if(!this.validateForm()){
+            return;
+        }
 
-    if(!this.validateForm()){
+        const identifier = this.elements.username.value.trim();
+        const password = this.elements.password.value;
+        const remember = this.elements.remember.checked;
 
-        return;
+        this.setLoading(true);
 
-    }
+        try{
 
-    const identifier = this.elements.username.value.trim();
+            const result = await AuthManager.login(
+                identifier,
+                password
+            );
 
-    const password = this.elements.password.value;
+            console.log("========== LOGIN RESULT ==========");
+            console.log(result);
 
-    const remember = this.elements.remember.checked;
+            const session = await AuthManager.getSession();
+            console.log("========== SUPABASE SESSION ==========");
+            console.log(session);
 
-    this.setLoading(true);
+            const user = await AuthManager.getUser();
+            console.log("========== SUPABASE USER ==========");
+            console.log(user);
 
-    try{
+            if(!result.success){
+                throw new Error(result.message);
+            }
 
-        const result = await AuthManager.login(
+            SessionManager.createSession(
+                result.profile,
+                remember
+            );
 
-            identifier,
+            console.log("========== LOCAL SESSION ==========");
+            console.log(SessionManager.getLocalSession());
 
-            password,
+            Toast.success(
+                "Connexion réussie",
+                "Bienvenue"
+            );
 
-            remember
+            setTimeout(()=>{
+                window.location.href = "dashboard.html";
+            },1200);
 
-        );
+        }catch(error){
 
-        console.log("========== LOGIN RESULT ==========");
-        console.log(result);
+            console.error("LOGIN ERROR :", error);
 
-        const session = await AuthManager.getSession();
+            this.handleError(error);
 
-        console.log("========== SUPABASE SESSION ==========");
-        console.log(session);
+        }finally{
 
-        const user = await AuthManager.getUser();
-
-        console.log("========== SUPABASE USER ==========");
-        console.log(user);
-
-        if(!result.success){
-
-            throw new Error(result.message);
+            this.setLoading(false);
 
         }
 
-        SessionManager.createSession(
-
-            result.profile,
-
-            remember
-
-        );
-
-        console.log("========== LOCAL SESSION ==========");
-        console.log(SessionManager.getLocalSession());
-
-        Toast.success(
-
-            "Connexion réussie",
-
-            "Bienvenue"
-
-        );
-
-        setTimeout(()=>{
-
-            window.location.href = "dashboard.html";
-
-        },1200);
-
-    }
-
-    catch(error){
-
-        console.error("LOGIN ERROR :", error);
-
-        this.handleError(error);
-
-    }
-
-    finally{
-
-        this.setLoading(false);
-
-    }
-
-},
+    },
     
      * ============================================================
      * Login Errors
