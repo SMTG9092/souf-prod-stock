@@ -620,24 +620,15 @@
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ============================================================ -->
-<!-- SCRIPTS EXTERNES — Architecture modulaire Production Ready   -->
-<!-- ============================================================ -->
+<!-- ============================================================
+SCRIPTS — ES Modules
+============================================================ -->
 
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Configuration globale -->
-<script src="../assets/js/config.js"></script>
-
-<!-- Utilitaires partagés -->
-<script src="../assets/js/utils.js"></script>
-
-<!-- Module d'authentification -->
-<script src="../assets/js/auth.js"></script>
-
-<!-- Module login (logique métier) -->
-<script src="../assets/js/login.js"></script>
+<!-- Main Application -->
+<script type="module" src="./assets/js/login.js"></script>
 
 </body>
 </html>
