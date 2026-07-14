@@ -301,90 +301,106 @@ const LoginController = {
 
     },
     /**
-     * ============================================================
-     * Handle Login
-     * ============================================================
-     */
+/**
+ * ============================================================
+ * Handle Login
+ * ============================================================
+ */
 
-    async handleLogin(e){
+async handleLogin(e){
 
-        e.preventDefault();
+    e.preventDefault();
 
-        if(this.isLoading) return;
+    if(this.isLoading) return;
 
-        if(!this.validateForm()){
+    if(!this.validateForm()){
 
-            return;
+        return;
 
-        }
+    }
 
-        const identifier = this.elements.username.value.trim();
+    const identifier = this.elements.username.value.trim();
 
-        const password = this.elements.password.value;
+    const password = this.elements.password.value;
 
-        const remember = this.elements.remember.checked;
+    const remember = this.elements.remember.checked;
 
-        this.setLoading(true);
+    this.setLoading(true);
 
-        try{
+    try{
 
-            const result = await AuthManager.login(
+        const result = await AuthManager.login(
 
-                identifier,
+            identifier,
 
-                password,
+            password,
 
-                remember
+            remember
 
-            );
+        );
 
-            if(!result.success){
+        console.log("========== LOGIN RESULT ==========");
+        console.log(result);
 
-                throw new Error(result.message);
+        const session = await AuthManager.getSession();
 
-            }
+        console.log("========== SUPABASE SESSION ==========");
+        console.log(session);
 
-            SessionManager.createSession(
+        const user = await AuthManager.getUser();
 
-                result.profile,
+        console.log("========== SUPABASE USER ==========");
+        console.log(user);
 
-                remember
+        if(!result.success){
 
-            );
-
-            Toast.success(
-
-                "Connexion réussie",
-
-                "Bienvenue"
-
-            );
-
-            setTimeout(()=>{
-
-                window.location.href="dashboard.html";
-
-            },1200);
+            throw new Error(result.message);
 
         }
 
-        catch(error){
+        SessionManager.createSession(
 
-            console.error(error);
+            result.profile,
 
-            this.handleError(error);
+            remember
 
-        }
+        );
 
-        finally{
+        console.log("========== LOCAL SESSION ==========");
+        console.log(SessionManager.getLocalSession());
 
-            this.setLoading(false);
+        Toast.success(
 
-        }
+            "Connexion réussie",
 
-    },
+            "Bienvenue"
 
-    /**
+        );
+
+        setTimeout(()=>{
+
+            window.location.href = "dashboard.html";
+
+        },1200);
+
+    }
+
+    catch(error){
+
+        console.error("LOGIN ERROR :", error);
+
+        this.handleError(error);
+
+    }
+
+    finally{
+
+        this.setLoading(false);
+
+    }
+
+},
+    
      * ============================================================
      * Login Errors
      * ============================================================
