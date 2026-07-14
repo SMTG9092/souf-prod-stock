@@ -41,33 +41,33 @@ const LoginController = {
 
     },
 
-    cacheElements(){
+cacheElements() {
 
-        this.elements={
+    this.elements = {
 
-            form:document.getElementById("loginForm"),
+        form: document.getElementById("loginForm"),
 
-            username:document.getElementById("username"),
+        username: document.getElementById("username"),
 
-            password:document.getElementById("password"),
+        password: document.getElementById("password"),
 
-            remember:document.getElementById("rememberMe"),
+        remember: document.getElementById("rememberMe"),
 
-            loginButton:document.getElementById("submitBtn"),
+        loginButton: document.getElementById("submitBtn"),
 
-            togglePassword:document.getElementById("togglePassword"),
+        togglePassword: document.getElementById("togglePassword"),
 
-            languageBtn:document.getElementById("languageBtn"),
+        languageBtn: document.getElementById("langSelector"),
 
-            languageMenu:document.getElementById("languageMenu"),
+        languageMenu: document.getElementById("langDropdown"),
 
-            themeBtn:document.getElementById("themeToggle"),
+        themeBtn: document.getElementById("themeToggle"),
 
-            loader:document.getElementById("fullscreenLoader")
+        loader: document.getElementById("fullscreenLoader")
 
-        };
+    };
 
-    },
+}
 
     bindEvents(){
 
@@ -127,7 +127,7 @@ const LoginController = {
 
         }
 
-        document.querySelectorAll(".lang-item")
+        document.querySelectorAll(".lang-option")
 
         .forEach(btn=>{
 
