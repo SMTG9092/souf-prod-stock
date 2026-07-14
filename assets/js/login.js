@@ -53,7 +53,7 @@ const LoginController = {
 
             remember:document.getElementById("rememberMe"),
 
-            loginButton:document.getElementById("loginButton"),
+            loginButton:document.getElementById("submitBtn"),
 
             togglePassword:document.getElementById("togglePassword"),
 
